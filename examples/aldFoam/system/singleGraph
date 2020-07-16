@@ -1,0 +1,24 @@
+// This file is part of aldFoam
+// Copyright 2019 Argonne UChicago LLC
+
+start   (0.01 1e-06 0.001);
+end     (0.39 1e-06 0.001);
+fields  (cov growth);
+
+// Sampling and I/O settings
+#includeEtc "caseDicts/postProcessing/graphs/sampleDict.cfg"
+
+// Override settings here, e.g.
+/*
+setConfig
+{
+    type patchCloud;
+    axis x;        // y, z, xyz
+    patches("substrate");
+}
+*/
+
+// Must be last entry
+#includeEtc "caseDicts/postProcessing/graphs/graph.cfg"
+
+// ************************************************************************* //

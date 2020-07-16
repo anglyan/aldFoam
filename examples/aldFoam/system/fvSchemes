@@ -1,0 +1,58 @@
+// This file is part of aldFoam
+// Copyright 2019 Argonne UChicago LLC
+
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      fvSchemes;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+ddtSchemes
+{
+    default         Euler;
+}
+
+dtSchemes
+{
+    default         Euler;
+}
+
+gradSchemes
+{
+    default         Gauss linear;
+}
+
+divSchemes
+{
+    default         none;
+    div(phi,N1)      Gauss limitedLinear 1;
+}
+
+laplacianSchemes
+{
+    default         none;
+    laplacian(D1,N1) Gauss linear corrected;
+}
+
+interpolationSchemes
+{
+    default         linear;
+}
+
+snGradSchemes
+{
+    default         corrected;
+}
+
+fluxRequired
+{
+    default         no;
+    N1               ;
+}
+
+
+// ************************************************************************* //

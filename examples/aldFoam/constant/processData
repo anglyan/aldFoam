@@ -1,0 +1,15 @@
+// This file is part of aldFoam
+// Copyright 2019 Argonne UChicago LLC
+
+
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "constant";
+    object      processData;
+}
+
+pressure      1.0;
+temperature   473.;

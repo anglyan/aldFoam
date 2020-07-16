@@ -1,0 +1,22 @@
+// This file is part of aldFoam
+// Copyright 2019 Argonne UChicago LLC
+
+#includeEtc "caseDicts/postProcessing/visualization/surfaces.cfg"
+
+fields       (N1 U);
+
+surfaces
+(
+    zNormal
+    {
+        $cuttingPlane;
+        pointAndNormalDict
+        {
+            basePoint    (0.20 0.01 0.001); // Overrides default basePoint (0 0 0)
+            normalVector $z;      // $z: macro for (0 0 1)
+        }
+    }
+
+);
+
+// ************************************************************************* //

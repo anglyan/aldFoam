@@ -1,0 +1,17 @@
+// This file is part of aldFoam
+// Copyright 2019 Argonne UChicago LLC
+
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "constant";
+    object      transportProperties;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+D1              D1 [ 0 2 -1 0 0 0 0 ] 0.01;
+vth             vth [ 0 1 -1 0 0 0 0 ] 144;
+
+// ************************************************************************* //

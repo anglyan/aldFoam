@@ -1,0 +1,31 @@
+// This file is part of aldFoam
+// Copyright 2019 Argonne UChicago LLC
+
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "constant";
+    object      surfaceProcesses;
+}
+
+numPatches      2;
+
+surfacePatches{
+
+    Wall{
+        sitearea    24e-20;
+        beta0       0.01;
+        beta1       0.0;
+        betarec     0.0;
+    }
+
+    substrate{
+        sitearea    24e-20;
+        beta0       0.01;
+        beta1       0.0;
+        betarec     0.0;
+    }
+
+}
