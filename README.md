@@ -22,6 +22,9 @@ cd aldFoam
 cd firstorder
 wmake
 cd ..
+cd dose
+wmake
+cd ..
 cd aldFoam
 wmake
 ```

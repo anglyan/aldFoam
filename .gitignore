@@ -36,3 +36,5 @@ firstorder/Make/linux*
 firstorder/lnInclude
 aldFoam/lnInclude
 aldFoam/Make/linux*
+dose/lnInclude
+dose/Make/linux*
