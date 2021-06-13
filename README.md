@@ -8,7 +8,7 @@ to solve partial differential equations using finite volume methods.
 
 # Disclaimer
 
-What you are seeing here is a pre-released version of aldFoam. The
+What you are seeing here is a first release version of aldFoam. The
 first public release will happen in late July 2020.
 
 # Install instructions
@@ -17,7 +17,7 @@ In order to install aldFoam you need to have OpenFOAM installed in your
 system. From github:
 
 ```shell
-git clone https://github.com/anglyan/aldFoam.git
+git clone https://github.com/aldsim/aldFoam.git
 cd aldFoam
 cd firstorder
 wmake
