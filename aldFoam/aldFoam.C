@@ -33,7 +33,8 @@ Description
 \*---------------------------------------------------------------------------*/
 
 #include "fvCFD.H"
-#include "fvOptions.H"
+#include "fvModels.H"
+#include "fvConstraints.H"
 #include "simpleControl.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -67,13 +68,14 @@ int main(int argc, char *argv[])
               + fvm::div(phi, N1)
               - fvm::laplacian(D1, N1)
              ==
-                fvOptions(N1)
+                fvModels.source(N1)
             );
 
             N1Eqn.relax();
-            fvOptions.constrain(N1Eqn);
+            fvConstraints.constrain(N1Eqn);
             N1Eqn.solve();
-            fvOptions.correct(N1);
+            fvConstraints.constrain(N1);
+
         }
 
 
