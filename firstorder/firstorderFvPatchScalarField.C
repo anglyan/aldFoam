@@ -1,27 +1,31 @@
-/*---------------------------------------------------------------------------
+/*---------------------------------------------------------------------------*\
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2025 OpenFOAM Foundation
+     \\/     M anipulation  |
+-------------------------------------------------------------------------------
+License
+    This file is part of OpenFOAM.
 
-Copyright 2019 Argonne UChicago LLC
-
-This file is part of aldFoam.
-
-    aldFoam is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
+    OpenFOAM is free software: you can redistribute it and/or modify it
+    under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    aldFoam is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+    OpenFOAM is distributed in the hope that it will be useful, but WITHOUT
+    ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+    FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+    for more details.
 
     You should have received a copy of the GNU General Public License
-    along with aldFoam.  If not, see <https://www.gnu.org/licenses/>.
+    along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 \*---------------------------------------------------------------------------*/
 
 #include "firstorderFvPatchScalarField.H"
 #include "addToRunTimeSelectionTable.H"
-#include "fvPatchFieldMapper.H"
+#include "fieldMapper.H"
 #include "volFields.H"
 #include "surfaceFields.H"
 
@@ -29,30 +33,11 @@ This file is part of aldFoam.
 
 Foam::scalar Foam::firstorderFvPatchScalarField::t() const
 {
-    return db().time().timeOutputValue();
+    return db().time().value();
 }
 
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
-
-Foam::firstorderFvPatchScalarField::
-firstorderFvPatchScalarField
-(
-    const fvPatch& p,
-    const DimensionedField<scalar, volMesh>& iF
-)
-:
-    mixedFvPatchScalarField(p, iF),
-    fieldData_(p.size(), Zero),
-    betaName_("beta"),
-    diffName_("D1"),
-    vthName_("vth")
-{
-    refValue() = Zero;
-    refGrad() = Zero;
-    valueFraction() = 0.0;
-}
-
 
 Foam::firstorderFvPatchScalarField::
 firstorderFvPatchScalarField
@@ -63,26 +48,15 @@ firstorderFvPatchScalarField
 )
 :
     mixedFvPatchScalarField(p, iF),
-    fieldData_(p.size(), Zero),
+    fieldData_("fieldData", iF.dimensions(), dict, p.size()),
     betaName_(dict.lookupOrDefault<word>("betaField", "beta")),
     diffName_(dict.lookupOrDefault<word>("diffCoeff", "D1")),
     vthName_(dict.lookupOrDefault<word>("vth", "vth"))
 {
     refGrad() = Zero;
     valueFraction() = 0.0;
-
     refValue() = Zero;
     fvPatchScalarField::operator=(refValue());
-
-
-    /*
-    // Initialise with the value entry if evaluation is not possible
-    fvPatchScalarField::operator=
-    (
-        scalarField("value", dict, p.size())
-    );
-    refValue() = *this;
-    */
 }
 
 
@@ -92,25 +66,11 @@ firstorderFvPatchScalarField
     const firstorderFvPatchScalarField& ptf,
     const fvPatch& p,
     const DimensionedField<scalar, volMesh>& iF,
-    const fvPatchFieldMapper& mapper
+    const fieldMapper& mapper
 )
 :
     mixedFvPatchScalarField(ptf, p, iF, mapper),
-    fieldData_(ptf.fieldData_, mapper),
-    betaName_(ptf.betaName_),
-    diffName_(ptf.diffName_),
-    vthName_(ptf.vthName_)
-{}
-
-
-Foam::firstorderFvPatchScalarField::
-firstorderFvPatchScalarField
-(
-    const firstorderFvPatchScalarField& ptf
-)
-:
-    mixedFvPatchScalarField(ptf),
-    fieldData_(ptf.fieldData_),
+    fieldData_(mapper(ptf.fieldData_)),
     betaName_(ptf.betaName_),
     diffName_(ptf.diffName_),
     vthName_(ptf.vthName_)
@@ -134,28 +94,32 @@ firstorderFvPatchScalarField
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-void Foam::firstorderFvPatchScalarField::autoMap
-(
-    const fvPatchFieldMapper& m
-)
-{
-    mixedFvPatchScalarField::autoMap(m);
-    fieldData_.autoMap(m);
-}
-
-
-void Foam::firstorderFvPatchScalarField::rmap
+void Foam::firstorderFvPatchScalarField::map
 (
     const fvPatchScalarField& ptf,
-    const labelList& addr
+    const fieldMapper& mapper
 )
 {
-    mixedFvPatchScalarField::rmap(ptf, addr);
+    mixedFvPatchScalarField::map(ptf, mapper);
 
     const firstorderFvPatchScalarField& tiptf =
         refCast<const firstorderFvPatchScalarField>(ptf);
 
-    fieldData_.rmap(tiptf.fieldData_, addr);
+    mapper(fieldData_, tiptf.fieldData_);
+}
+
+
+void Foam::firstorderFvPatchScalarField::reset
+(
+    const fvPatchScalarField& ptf
+)
+{
+    mixedFvPatchScalarField::reset(ptf);
+
+    const firstorderFvPatchScalarField& tiptf =
+        refCast<const firstorderFvPatchScalarField>(ptf);
+
+    fieldData_.reset(tiptf.fieldData_);
 }
 
 
@@ -193,7 +157,8 @@ void Foam::firstorderFvPatchScalarField::write
 ) const
 {
     fvPatchScalarField::write(os);
-    writeEntry("value", os);
+    writeEntry(os, "fieldData", fieldData_);
+    writeEntry(os, "value", *this);
 }
 
 

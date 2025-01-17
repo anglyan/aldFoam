@@ -20,7 +20,6 @@ This file is part of aldFoam.
 
 \*---------------------------------------------------------------------------*/
 
-
 #ifndef firstorderFvPatchScalarField_H
 #define firstorderFvPatchScalarField_H
 
@@ -33,17 +32,14 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-     Class firstorderFvPatchScalarField Declaration
+                          Class firstorderFvPatchScalarField Declaration
 \*---------------------------------------------------------------------------*/
 
 class firstorderFvPatchScalarField
 :
     public mixedFvPatchScalarField
 {
-    // Private data
-
-        //- Field of Types, typically defined across patch faces
-        //  e.g. total pressure p0_.  Other options include vectorField
+    // Private Data
 
         scalarField fieldData_;
         word betaName_;
@@ -65,13 +61,6 @@ public:
 
     // Constructors
 
-        //- Construct from patch and internal field
-        firstorderFvPatchScalarField
-        (
-            const fvPatch&,
-            const DimensionedField<scalar, volMesh>&
-        );
-
         //- Construct from patch, internal field and dictionary
         firstorderFvPatchScalarField
         (
@@ -87,25 +76,16 @@ public:
             const firstorderFvPatchScalarField&,
             const fvPatch&,
             const DimensionedField<scalar, volMesh>&,
-            const fvPatchFieldMapper&
+            const fieldMapper&
         );
 
-        //- Construct as copy
+        //- Disallow copy without setting internal field reference
         firstorderFvPatchScalarField
         (
             const firstorderFvPatchScalarField&
-        );
+        ) = delete;
 
-        //- Construct and return a clone
-        virtual tmp<fvPatchScalarField> clone() const
-        {
-            return tmp<fvPatchScalarField>
-            (
-                new firstorderFvPatchScalarField(*this)
-            );
-        }
-
-        //- Construct as copy setting internal field reference
+        //- Copy constructor setting internal field reference
         firstorderFvPatchScalarField
         (
             const firstorderFvPatchScalarField&,
@@ -129,22 +109,16 @@ public:
         }
 
 
-    // Member functions
+    // Member Functions
 
         // Mapping functions
 
-            //- Map (and resize as needed) from self given a mapping object
-            virtual void autoMap
-            (
-                const fvPatchFieldMapper&
-            );
+            //- Map the given fvPatchField onto this fvPatchField
+            virtual void map(const fvPatchScalarField&, const fieldMapper&);
 
-            //- Reverse map the given fvPatchField onto this fvPatchField
-            virtual void rmap
-            (
-                const fvPatchScalarField&,
-                const labelList&
-            );
+            //- Reset the fvPatchField to the given fvPatchField
+            //  Used for mesh to mesh mapping
+            virtual void reset(const fvPatchScalarField&);
 
 
         // Evaluation functions
