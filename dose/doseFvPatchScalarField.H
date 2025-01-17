@@ -1,5 +1,6 @@
-/*---------------------------------------------------------------------------*\
-Copyright 2019 Argonne UChicago LLC
+/*---------------------------------------------------------------------------
+
+Copyright 2019-2025 Argonne UChicago LLC
 
 This file is part of aldFoam.
 
@@ -30,22 +31,17 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-     Class doseFvPatchScalarField Declaration
+                          Class doseFvPatchScalarField Declaration
 \*---------------------------------------------------------------------------*/
 
 class doseFvPatchScalarField
 :
     public mixedFvPatchScalarField
 {
-    // Private data
-
-        //- Field of Types, typically defined across patch faces
-        //  e.g. total pressure p0_.  Other options include vectorField
         scalarField doseValue;
         scalar doseStart;
         scalar doseEnd;
         word diffName_;
-
 
     // Private Member Functions
 
@@ -60,13 +56,6 @@ public:
 
 
     // Constructors
-
-        //- Construct from patch and internal field
-        doseFvPatchScalarField
-        (
-            const fvPatch&,
-            const DimensionedField<scalar, volMesh>&
-        );
 
         //- Construct from patch, internal field and dictionary
         doseFvPatchScalarField
@@ -83,25 +72,16 @@ public:
             const doseFvPatchScalarField&,
             const fvPatch&,
             const DimensionedField<scalar, volMesh>&,
-            const fvPatchFieldMapper&
+            const fieldMapper&
         );
 
-        //- Construct as copy
+        //- Disallow copy without setting internal field reference
         doseFvPatchScalarField
         (
             const doseFvPatchScalarField&
-        );
+        ) = delete;
 
-        //- Construct and return a clone
-        virtual tmp<fvPatchScalarField> clone() const
-        {
-            return tmp<fvPatchScalarField>
-            (
-                new doseFvPatchScalarField(*this)
-            );
-        }
-
-        //- Construct as copy setting internal field reference
+        //- Copy constructor setting internal field reference
         doseFvPatchScalarField
         (
             const doseFvPatchScalarField&,
@@ -125,22 +105,16 @@ public:
         }
 
 
-    // Member functions
+    // Member Functions
 
         // Mapping functions
 
-            //- Map (and resize as needed) from self given a mapping object
-            virtual void autoMap
-            (
-                const fvPatchFieldMapper&
-            );
+            //- Map the given fvPatchField onto this fvPatchField
+            virtual void map(const fvPatchScalarField&, const fieldMapper&);
 
-            //- Reverse map the given fvPatchField onto this fvPatchField
-            virtual void rmap
-            (
-                const fvPatchScalarField&,
-                const labelList&
-            );
+            //- Reset the fvPatchField to the given fvPatchField
+            //  Used for mesh to mesh mapping
+            virtual void reset(const fvPatchScalarField&);
 
 
         // Evaluation functions

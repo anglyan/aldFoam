@@ -1,5 +1,6 @@
-/*---------------------------------------------------------------------------*\
-Copyright 2019 Argonne UChicago LLC
+/*---------------------------------------------------------------------------
+
+Copyright 2019-2025 Argonne UChicago LLC
 
 This file is part of aldFoam.
 
@@ -20,7 +21,7 @@ This file is part of aldFoam.
 
 #include "doseFvPatchScalarField.H"
 #include "addToRunTimeSelectionTable.H"
-#include "fvPatchFieldMapper.H"
+#include "fieldMapper.H"
 #include "volFields.H"
 #include "surfaceFields.H"
 
@@ -28,30 +29,11 @@ This file is part of aldFoam.
 
 Foam::scalar Foam::doseFvPatchScalarField::t() const
 {
-    return db().time().timeOutputValue();
+    return db().time().value();
 }
 
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
-
-Foam::doseFvPatchScalarField::
-doseFvPatchScalarField
-(
-    const fvPatch& p,
-    const DimensionedField<scalar, volMesh>& iF
-)
-:
-    mixedFvPatchScalarField(p, iF),
-    doseValue(Zero),
-    diffName_("D1"),
-    doseStart(0.0),
-    doseEnd(0.0)
-{
-    refValue() = Zero;
-    refGrad() = Zero;
-    valueFraction() = 0.0;
-}
-
 
 Foam::doseFvPatchScalarField::
 doseFvPatchScalarField
@@ -72,15 +54,6 @@ doseFvPatchScalarField
     refValue() = doseValue;
     fvPatchScalarField::operator=(refValue());
 
-
-    /*
-    // Initialise with the value entry if evaluation is not possible
-    fvPatchScalarField::operator=
-    (
-        scalarField("value", dict, p.size())
-    );
-    refValue() = *this;
-    */
 }
 
 
@@ -90,25 +63,11 @@ doseFvPatchScalarField
     const doseFvPatchScalarField& ptf,
     const fvPatch& p,
     const DimensionedField<scalar, volMesh>& iF,
-    const fvPatchFieldMapper& mapper
+    const fieldMapper& mapper
 )
 :
     mixedFvPatchScalarField(ptf, p, iF, mapper),
-    doseValue(ptf.doseValue, mapper),
-    doseStart(ptf.doseStart),
-    doseEnd(ptf.doseEnd),
-    diffName_(ptf.diffName_)
-{}
-
-
-Foam::doseFvPatchScalarField::
-doseFvPatchScalarField
-(
-    const doseFvPatchScalarField& ptf
-)
-:
-    mixedFvPatchScalarField(ptf),
-    doseValue(ptf.doseValue),
+    doseValue(mapper(ptf.doseValue)),
     doseStart(ptf.doseStart),
     doseEnd(ptf.doseEnd),
     diffName_(ptf.diffName_)
@@ -129,31 +88,34 @@ doseFvPatchScalarField
     diffName_(ptf.diffName_)
 {}
 
-
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-void Foam::doseFvPatchScalarField::autoMap
-(
-    const fvPatchFieldMapper& m
-)
-{
-    mixedFvPatchScalarField::autoMap(m);
-    doseValue.autoMap(m);
-}
-
-
-void Foam::doseFvPatchScalarField::rmap
+void Foam::doseFvPatchScalarField::map
 (
     const fvPatchScalarField& ptf,
-    const labelList& addr
+    const fieldMapper& mapper
 )
 {
-    mixedFvPatchScalarField::rmap(ptf, addr);
+    mixedFvPatchScalarField::map(ptf, mapper);
 
     const doseFvPatchScalarField& tiptf =
         refCast<const doseFvPatchScalarField>(ptf);
 
-    doseValue.rmap(tiptf.doseValue, addr);
+    mapper(doseValue, tiptf.doseValue);
+}
+
+
+void Foam::doseFvPatchScalarField::reset
+(
+    const fvPatchScalarField& ptf
+)
+{
+    mixedFvPatchScalarField::reset(ptf);
+
+    const doseFvPatchScalarField& tiptf =
+        refCast<const doseFvPatchScalarField>(ptf);
+
+    doseValue.reset(tiptf.doseValue);
 }
 
 
@@ -197,11 +159,13 @@ void Foam::doseFvPatchScalarField::write
     Ostream& os
 ) const
 {
-    mixedFvPatchScalarField::write(os);
-    writeEntry("doseValue", os);
+    fvPatchScalarField::write(os);
+    writeEntry(os, "doseValue", doseValue);
     os.writeKeyword("doseStart") << doseStart << token::END_STATEMENT <<nl;
     os.writeKeyword("doseEnd") << doseEnd << token::END_STATEMENT <<nl;
+    writeEntry(os, "value", *this);
 }
+
 
 
 // * * * * * * * * * * * * * * Build Macro Function  * * * * * * * * * * * * //
