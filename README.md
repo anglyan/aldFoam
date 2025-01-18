@@ -6,8 +6,7 @@ aldFoam comprises a number of solvers and boundary conditions.
 aldFoam is built on top of [OpenFOAM](https://openfoam.org/), a C++ toolbox
 to solve partial differential equations using finite volume methods.
 
-The version in the master branch is meant to work with OpenFoam-10. The
-branch `openfoam6` contains the original code for OpenFOAM-6. 
+The version in the master branch is meant to work with OpenFoam-10.
 
 # Install instructions
 
