@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------*\
-Copyright 2019-2023 Argonne UChicago LLC
+Copyright 2019-2025 Argonne UChicago LLC
 
 This file is part of aldFoam.
 

@@ -6,6 +6,8 @@ aldFoam comprises a number of solvers and boundary conditions.
 aldFoam is built on top of [OpenFOAM](https://openfoam.org/), a C++ toolbox
 to solve partial differential equations using finite volume methods.
 
+The version in the master branch is meant to work with OpenFoam-10. The
+branch `openfoam6`. 
 
 # Install instructions
 
@@ -34,7 +36,8 @@ A description of aldFoam can be found in the manuscript:
 
 A. Yanguas-Gil, J. A. Libera, and J. W. Elam, Reactor scale simulations of ALD and ALE: ideal and non-ideal self-limited processes in a cylindrical and a 300 mm wafer cross-flow reactor, [arXiv:2106.07132](https://arxiv.org/abs/2106.07132)
 
-The manuscript is currently under review.
+The manuscript was published in the 
+[Journal of Vacuum Science & Technology A](https://doi.org/10.1116/6.0001212)
 
 # Authors
 
@@ -52,7 +55,7 @@ effects, including the presence of competing byproducts and soft-saturating proc
 
 # Copyright and license
 
-Copyright (2019) UChicago Argonne, LLC
+Copyright (2019-2025) UChicago Argonne, LLC
 
 aldFoam is distributed under the terms of the GPLv3 license. A copy
 of the license is included in this distribution.
