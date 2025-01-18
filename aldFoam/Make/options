@@ -5,6 +5,5 @@ EXE_INC = \
 
 EXE_LIBS = \
     -lfiniteVolume \
-    -lfvOptions \
     -lmeshTools \
     -lsampling

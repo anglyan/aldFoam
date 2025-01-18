@@ -1,6 +1,6 @@
 /*---------------------------------------------------------------------------
 
-Copyright 2019 Argonne UChicago LLC
+Copyright 2019-2025 Argonne UChicago LLC
 
 This file is part of aldFoam.
 
@@ -29,7 +29,7 @@ This file is part of aldFoam.
 
 Foam::scalar Foam::firstorderFvPatchScalarField::t() const
 {
-    return db().time().timeOutputValue();
+    return db().time().userTimeValue();
 }
 
 
@@ -74,15 +74,6 @@ firstorderFvPatchScalarField
     refValue() = Zero;
     fvPatchScalarField::operator=(refValue());
 
-
-    /*
-    // Initialise with the value entry if evaluation is not possible
-    fvPatchScalarField::operator=
-    (
-        scalarField("value", dict, p.size())
-    );
-    refValue() = *this;
-    */
 }
 
 
@@ -96,21 +87,7 @@ firstorderFvPatchScalarField
 )
 :
     mixedFvPatchScalarField(ptf, p, iF, mapper),
-    fieldData_(ptf.fieldData_, mapper),
-    betaName_(ptf.betaName_),
-    diffName_(ptf.diffName_),
-    vthName_(ptf.vthName_)
-{}
-
-
-Foam::firstorderFvPatchScalarField::
-firstorderFvPatchScalarField
-(
-    const firstorderFvPatchScalarField& ptf
-)
-:
-    mixedFvPatchScalarField(ptf),
-    fieldData_(ptf.fieldData_),
+    fieldData_(mapper(ptf.fieldData_)),
     betaName_(ptf.betaName_),
     diffName_(ptf.diffName_),
     vthName_(ptf.vthName_)
@@ -131,7 +108,6 @@ firstorderFvPatchScalarField
     vthName_(ptf.vthName_)
 {}
 
-
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 void Foam::firstorderFvPatchScalarField::autoMap
@@ -140,7 +116,7 @@ void Foam::firstorderFvPatchScalarField::autoMap
 )
 {
     mixedFvPatchScalarField::autoMap(m);
-    fieldData_.autoMap(m);
+    m(fieldData_, fieldData_);
 }
 
 
@@ -156,6 +132,20 @@ void Foam::firstorderFvPatchScalarField::rmap
         refCast<const firstorderFvPatchScalarField>(ptf);
 
     fieldData_.rmap(tiptf.fieldData_, addr);
+}
+
+
+void Foam::firstorderFvPatchScalarField::reset
+(
+    const fvPatchScalarField& ptf
+)
+{
+    mixedFvPatchScalarField::reset(ptf);
+
+    const firstorderFvPatchScalarField& tiptf =
+        refCast<const firstorderFvPatchScalarField>(ptf);
+
+    fieldData_.reset(tiptf.fieldData_);
 }
 
 
@@ -193,7 +183,7 @@ void Foam::firstorderFvPatchScalarField::write
 ) const
 {
     fvPatchScalarField::write(os);
-    writeEntry("value", os);
+    writeEntry(os, "value", *this);
 }
 
 

@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------*\
-Copyright 2019 Argonne UChicago LLC
+Copyright 2019-2025 Argonne UChicago LLC
 
 This file is part of aldFoam.
 
@@ -28,7 +28,7 @@ This file is part of aldFoam.
 
 Foam::scalar Foam::doseFvPatchScalarField::t() const
 {
-    return db().time().timeOutputValue();
+    return db().time().userTimeValue();
 }
 
 
@@ -94,21 +94,7 @@ doseFvPatchScalarField
 )
 :
     mixedFvPatchScalarField(ptf, p, iF, mapper),
-    doseValue(ptf.doseValue, mapper),
-    doseStart(ptf.doseStart),
-    doseEnd(ptf.doseEnd),
-    diffName_(ptf.diffName_)
-{}
-
-
-Foam::doseFvPatchScalarField::
-doseFvPatchScalarField
-(
-    const doseFvPatchScalarField& ptf
-)
-:
-    mixedFvPatchScalarField(ptf),
-    doseValue(ptf.doseValue),
+    doseValue(mapper(ptf.doseValue)),
     doseStart(ptf.doseStart),
     doseEnd(ptf.doseEnd),
     diffName_(ptf.diffName_)
@@ -138,7 +124,7 @@ void Foam::doseFvPatchScalarField::autoMap
 )
 {
     mixedFvPatchScalarField::autoMap(m);
-    doseValue.autoMap(m);
+    m(doseValue, doseValue);
 }
 
 
@@ -157,12 +143,22 @@ void Foam::doseFvPatchScalarField::rmap
 }
 
 
+void Foam::doseFvPatchScalarField::reset
+(
+    const fvPatchScalarField& ptf
+)
+{
+    mixedFvPatchScalarField::reset(ptf);
+
+    const doseFvPatchScalarField& tiptf =
+        refCast<const doseFvPatchScalarField>(ptf);
+
+    doseValue.reset(tiptf.doseValue);
+}
+
+
 void Foam::doseFvPatchScalarField::updateCoeffs()
 {
-    if (updated())
-    {
-        return;
-    }
     const scalar currtime = t();
 
     if (currtime >= doseStart && currtime < doseEnd){
@@ -187,7 +183,6 @@ void Foam::doseFvPatchScalarField::updateCoeffs()
         refValue() = 0.0;
 //        valueFraction() = 0.0;
     }
-
     mixedFvPatchScalarField::updateCoeffs();
 }
 
@@ -197,10 +192,10 @@ void Foam::doseFvPatchScalarField::write
     Ostream& os
 ) const
 {
-    mixedFvPatchScalarField::write(os);
-    writeEntry("doseValue", os);
-    os.writeKeyword("doseStart") << doseStart << token::END_STATEMENT <<nl;
-    os.writeKeyword("doseEnd") << doseEnd << token::END_STATEMENT <<nl;
+    fvPatchScalarField::write(os);
+    writeEntry(os, "doseValue", doseValue);
+    writeEntry(os, "doseStart", doseStart);
+    writeEntry(os, "doseEnd", doseEnd);
 }
 
 

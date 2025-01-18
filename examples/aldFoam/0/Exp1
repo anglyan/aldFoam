@@ -18,25 +18,25 @@ boundaryField
     inlet
     {
         type            calculated;
-        value           0;
+        value           uniform 0;
     }
 
     substrate
     {
         type            calculated;
-        value           0;
+        value           uniform 0;
     }
 
 
     Wall
     {
         type            calculated;
-        value           0;
+        value           uniform 0;
     }
 
     outlet
     {
         type            calculated;
-        value           0;
+        value           uniform 0;
     }
 }
